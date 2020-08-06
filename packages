@@ -1,0 +1,2 @@
+Pansies -AllowClobber
+posh-git -Scope CurrentUser -AllowPrerelease -Force
