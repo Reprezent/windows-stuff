@@ -1,5 +1,13 @@
 param([Switch]$WaitForKey)
 
+Function Move-IfExists($path)
+{
+	if (Test-Path -Path "$path")
+	{
+		Move-Item -Path "$path" "$path.bak"
+	}
+}
+
 if (([Version](Get-CimInstance Win32_OperatingSystem).version).Major -lt 10)
 {
     Write-Host -ForegroundColor Red "The DeveloperMode is only supported on Windows 10"
@@ -72,8 +80,11 @@ foreach ($line in Get-Content .\packages)
 }
 
 # Make a link for vim
+Move-IfExists("~/vimfiles")
 New-Item -Type SymbolicLink -Path "~/vimfiles" -Target "$PSScriptRoot/vim"
 
 # Make a link for powershell
+Move-IfExists("$HOME/Documents/WindowsPowershell")
 New-Item -Type SymbolicLink -Path "$HOME/Documents/WindowsPowershell" -Target "$HOME/Documents/Powershell"
+Move-IfExists("$HOME/Documents/Powershell/Microsoft.PowerShell_profile.ps1")
 New-Item -Type SymbolicLink -Path "$HOME/Documents/Powershell/Microsoft.PowerShell_profile.ps1" -Target "$PSScriptRoot/powershell/powershell-profile.ps1"
