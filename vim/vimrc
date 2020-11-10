@@ -3,6 +3,7 @@ if has('win32') || has ('win64')
 else
     let $VIMHOME = $HOME."/.vim"
 endif
+
 " Use Vim settings, rather than Vi settings (much better!).
 " This must be first, because it changes other options as a side effect.
 " Avoid side effects when it was already reset.
@@ -75,21 +76,21 @@ if has("autocmd")
   " Revert with ":filetype off".
   filetype plugin indent on
 
-"  " Put these in an autocmd group, so that you can revert them with:
-"  " ":augroup vimStartup | au! | augroup END"
-"  augroup vimStartup
-"    au!
-"
-"    " When editing a file, always jump to the last known cursor position.
-"    " Don't do it when the position is invalid, when inside an event handler
-"    " (happens when dropping a file on gvim) and for a commit message (it's
-"    " likely a different one than last time).
-"    autocmd BufReadPost ?*
-"      \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
-"      \ |   exe "normal! g`\""
-"      \ | endif
-"
-"  augroup END
+  " Put these in an autocmd group, so that you can revert them with:
+  " ":augroup vimStartup | au! | augroup END"
+  augroup vimStartup
+    au!
+
+    " When editing a file, always jump to the last known cursor position.
+    " Don't do it when the position is invalid, when inside an event handler
+    " (happens when dropping a file on gvim) and for a commit message (it's
+    " likely a different one than last time).
+    autocmd BufReadPost ?*
+      \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+      \ |   exe "normal! g`\""
+      \ | endif
+
+  augroup END
 
 endif " has("autocmd")
 "set t_kb=
@@ -137,11 +138,13 @@ set wildmode=longest,list
 set incsearch
 set hlsearch
 
-:colorscheme elflord
+colorscheme elflord
 
 set showtabline=2
+
 "sets max column to be 80 characters
 set colorcolumn=+80
+
 " Show highlighting groups for current word
 nmap <C-S-P> :call <SID>SynStack()<CR>
 function! <SID>SynStack()
