@@ -88,6 +88,7 @@ New-Item -Type SymbolicLink -Path "~/_vimrc" -Target "$PSScriptRoot/vim/vimrc"
 
 # Make a link for powershell
 Move-IfExists("$HOME/Documents/WindowsPowershell")
+New-Item -ItemType Directory -Force -Path "$HOME/Documents/Powershell"
 New-Item -Type SymbolicLink -Path "$HOME/Documents/WindowsPowershell" -Target "$HOME/Documents/Powershell"
 Move-IfExists("$HOME/Documents/Powershell/Microsoft.PowerShell_profile.ps1")
 New-Item -Type SymbolicLink -Path "$HOME/Documents/Powershell/Microsoft.PowerShell_profile.ps1" -Target "$PSScriptRoot/powershell/powershell-profile.ps1"
