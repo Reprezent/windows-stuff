@@ -83,8 +83,13 @@ foreach ($line in Get-Content .\packages)
 Move-IfExists("~/vimfiles")
 New-Item -Type SymbolicLink -Path "~/vimfiles" -Target "$PSScriptRoot/vim"
 
+Move-IfExists("~/_vimrc")
+New-Item -Type SymbolicLink -Path "~/_vimrc" -Target "$PSScriptRoot/vim/vimrc"
+
 # Make a link for powershell
 Move-IfExists("$HOME/Documents/WindowsPowershell")
 New-Item -Type SymbolicLink -Path "$HOME/Documents/WindowsPowershell" -Target "$HOME/Documents/Powershell"
 Move-IfExists("$HOME/Documents/Powershell/Microsoft.PowerShell_profile.ps1")
 New-Item -Type SymbolicLink -Path "$HOME/Documents/Powershell/Microsoft.PowerShell_profile.ps1" -Target "$PSScriptRoot/powershell/powershell-profile.ps1"
+Move-IfExists("$HOME/Documents/Powershell/.ps1")
+New-Item -Type SymbolicLink -Path "$HOME/Documents/Powershell/powershellprofile-local.ps1" -Target "$PSScriptRoot/powershell/powershellprofile-local.ps1"

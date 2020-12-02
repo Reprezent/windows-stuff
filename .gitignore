@@ -1,3 +1,4 @@
 # Ignore any machine specific files
 vim/backups
 vim/undos
+powershell/powershellprofile-local.ps1

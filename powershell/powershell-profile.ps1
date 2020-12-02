@@ -13,6 +13,11 @@ function prompt {
     return $name+$separator+$computer+$location+$end+$vssstatus
 }
 
+if (Test-Path -Path "$(Split-Path -Path $PROFILE)\powershellprofile-local.ps1")
+{
+    . "$(Split-Path -Path $PROFILE)\powershellprofile-local.ps1"
+}
+
 Import-Module posh-git
 Set-PSReadLineKeyHandler -Chord Tab -Function MenuComplete
 Set-PSReadLineKeyHandler -Chord UpArrow -Function HistorySearchBackward
