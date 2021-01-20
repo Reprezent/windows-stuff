@@ -24,6 +24,22 @@ Set-PSReadLineKeyHandler -Chord UpArrow -Function HistorySearchBackward
 Set-PSReadLineKeyHandler -Chord DownArrow -Function HistorySearchForward
 
 
+# Git shortcuts
+$git1_decorate="%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)"
+$git2_decorate='%C(bold blue)%h%C(reset) - %C(bold cyan)%a%D%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''         %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+$git3_decorate='%C(bold blue)%h%C(reset) - %C(bold cyan)%a%D%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(comitted: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          %C(dim white)- %an <%ae> %C(reset) %C(dim white)(comitter: %cn <%ce>)%C(reset)'
+Function GitlFunc {git log --graph --abbrev-commit --decorate --format=format:$git1_decorate --all $args}
+Function Gitl2Func {git log --graph --abbrev-commit --decorate --format=format:$git2_decorate --all $args}
+Function Gitl3Func {git log --graph --abbrev-commit --decorate --format=format:$git3_decorate --all $args}
+Function GistFunc {git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit}
+
+
+Set-Alias -Name "gist" -Value GistFunc
+Set-Alias -Name "gitl" -Value GitlFunc
+Set-Alias -Name "gitl2" -Value Gitl2Func
+Set-Alias -Name "gitl3" -Value Gitl3Func
+
+# .. Shortcuts
 Function GoBack1 {Set-Location -Path ..}
 Function GoBack2 {Set-Location -Path ../..}
 Function GoBack3 {Set-Location -Path ../../..}
