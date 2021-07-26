@@ -6,7 +6,7 @@ function prompt {
     $computer = "$(Text -ForegroundColor $RED $env:computername) "
     $location = "$(Get-Location)"
     $end = "$(Text -fg Cyan "> ")"
-    $vssstatus = "$(Write-GitStatus (Get-GitStatus)) "
+    $vssstatus = "$(Write-GitStatus $(Get-GitStatus)) "
     if ($vssstatus -eq " ") {
         $vssstatus = ""
     }
