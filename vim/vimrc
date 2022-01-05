@@ -176,3 +176,12 @@ else
     set undodir^=$HOME/undos
   endif
 endif
+
+if !empty($CONEMUBUILD)
+    set term=pcansi
+    set t_Co=256
+    let &t_AB="\e[48;5;%dm"
+    let &t_AF="\e[38;5;%dm"
+    set bs=indent,eol,start
+    colorscheme wombat256
+endif  
