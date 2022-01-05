@@ -86,11 +86,12 @@ New-Item -Type SymbolicLink -Path "~/vimfiles" -Target "$PSScriptRoot/vim"
 Move-IfExists("~/_vimrc")
 New-Item -Type SymbolicLink -Path "~/_vimrc" -Target "$PSScriptRoot/vim/vimrc"
 
+$documentsPath = $(Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders' -Name Personal).Personal
 # Make a link for powershell
-Move-IfExists("$HOME/Documents/WindowsPowershell")
-New-Item -ItemType Directory -Force -Path "$HOME/Documents/Powershell"
-New-Item -Type SymbolicLink -Path "$HOME/Documents/WindowsPowershell" -Target "$HOME/Documents/Powershell"
-Move-IfExists("$HOME/Documents/Powershell/Microsoft.PowerShell_profile.ps1")
-New-Item -Type SymbolicLink -Path "$HOME/Documents/Powershell/Microsoft.PowerShell_profile.ps1" -Target "$PSScriptRoot/powershell/powershell-profile.ps1"
-Move-IfExists("$HOME/Documents/Powershell/.ps1")
-New-Item -Type SymbolicLink -Path "$HOME/Documents/Powershell/powershellprofile-local.ps1" -Target "$PSScriptRoot/powershell/powershellprofile-local.ps1"
+Move-IfExists("$documentsPath/WindowsPowershell")
+New-Item -ItemType Directory -Force -Path "$documentsPath/Powershell"
+New-Item -Type SymbolicLink -Path "$documentsPath/WindowsPowershell" -Target "$documentsPath/Powershell"
+Move-IfExists("$documentsPath/Powershell/Microsoft.PowerShell_profile.ps1")
+New-Item -Type SymbolicLink -Path "$documentsPath/Powershell/Microsoft.PowerShell_profile.ps1" -Target "$PSScriptRoot/powershell/powershell-profile.ps1"
+Move-IfExists("$documentsPath/Powershell/.ps1")
+New-Item -Type SymbolicLink -Path "$documentsPath/Powershell/powershellprofile-local.ps1" -Target "$PSScriptRoot/powershell/powershellprofile-local.ps1"
