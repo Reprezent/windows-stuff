@@ -5,12 +5,13 @@ function prompt {
     $separator = "$(Text -ForegroundColor Cyan ":")"
     $computer = "$(Text -ForegroundColor $RED $env:computername) "
     $location = "$(Get-Location)"
+    # VSCode SSH remote doesn't like the ending for some reason so leave it out
     $end = "$(Text -fg Cyan "> ")"
     $vssstatus = "$(Write-GitStatus $(Get-GitStatus)) "
     if ($vssstatus -eq " ") {
         $vssstatus = ""
     }
-    return $name+$separator+$computer+$location+$end+$vssstatus
+    return $name+$separator+$computer+$location+$vssstatus#+$end+$vssstatus
 }
 
 if (Test-Path -Path "$(Split-Path -Path $PROFILE)\powershellprofile-local.ps1")
