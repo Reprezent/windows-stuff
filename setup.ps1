@@ -2,10 +2,25 @@ param([Switch]$WaitForKey)
 
 Function Move-IfExists($path)
 {
-	if (Test-Path -Path "$path")
-	{
-		Move-Item -Path "$path" "$path.bak"
-	}
+    if (Test-Path -Path "$path")
+    {
+        Move-Item -Path "$path" "$path.bak"
+    }
+}
+
+Function CreateLink($path, $target)
+{
+    $current = Get-Item -Path $path | Select-Object -ExpandProperty Target
+    if ($current -ne $target)
+    {
+        # Make a link for vim
+        Move-IfExists($path)
+        New-Item -Type SymbolicLink -Path $path -Target $target
+    }
+    else
+    {
+        Write-Host "$Path pointing correctly"
+    }
 }
 
 if (([Version](Get-CimInstance Win32_OperatingSystem).version).Major -lt 10)
@@ -24,7 +39,7 @@ Function InstallPowershellModules()
 
 Function InstallWinGetPackages()
 {
-    foreach ($line in Get-Content .\winget-packages)
+    foreach ($line in Get-Content $PSScriptRoot/winget-packages)
     {
         Invoke-Expression "winget install --source winget --id $line"
     }
@@ -32,15 +47,9 @@ Function InstallWinGetPackages()
 
 Function SetupVim()
 {
-    # Make a link for vim
-    Move-IfExists("~/vimfiles")
-    New-Item -Type SymbolicLink -Path "~/vimfiles" -Target "$PSScriptRoot/vim"
-
-    Move-IfExists("~/_vimrc")
-    New-Item -Type SymbolicLink -Path "~/_vimrc" -Target "$PSScriptRoot/vim/vimrc"
-
-    Move-IfExists("~/_gvimrc")
-    New-Item -Type SymbolicLink -Path "~/_gvimrc" -Target "$PSScriptRoot/vim/vimrc"
+    CreateLink("~/vimfiles", "$PSScriptRoot/vim")
+    CreateLink("~/_vimrc", "$PSScriptRoot/vim/vimrc")
+    CreateLink("~/_gvimrc", "$PSScriptRoot/vim/vimrc")
 }
 
 Function SetupPowershell()
