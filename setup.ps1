@@ -10,17 +10,20 @@ Function Move-IfExists($path)
 
 Function CreateLink($path, $target)
 {
-    $current = Get-Item -Path $path | Select-Object -ExpandProperty Target
-    if ($current -ne $target)
+
+    if (Test-Path -Path $path)
     {
-        # Make a link for vim
-        Move-IfExists($path)
-        New-Item -Type SymbolicLink -Path $path -Target $target
+        $current = Get-Item -Path $path | Select-Object -ExpandProperty Target
+        if ($current -eq $target)
+        {
+            Write-Host "$Path pointing correctly"
+            return
+        }
     }
-    else
-    {
-        Write-Host "$Path pointing correctly"
-    }
+
+    # Make a link for vim
+    Move-IfExists($path)
+    New-Item -Type SymbolicLink -Path $path -Target $target
 }
 
 if (([Version](Get-CimInstance Win32_OperatingSystem).version).Major -lt 10)
