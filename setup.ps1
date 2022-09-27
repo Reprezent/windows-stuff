@@ -89,7 +89,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
         Enable-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -Online -All -LimitAccess -NoRestart
     }
 
-    InstallWinGetPackages()
+    InstallWinGetPackages
     if ($WaitForKey)
     {
         Write-Host -NoNewLine "Press any key to continue..."
@@ -98,9 +98,9 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 }
 else
 {
-    SetupPowershell()
-    InstallPowershellModules()
-    SetupVim()
+    SetupPowershell
+    InstallPowershellModules
+    SetupVim
    # We are not running "as Administrator" - so relaunch as administrator
    # Create a new process object that starts PowerShell
    $newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
