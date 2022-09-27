@@ -55,14 +55,20 @@ Function SetupVim()
 Function SetupPowershell()
 {
     $documentsPath = $(Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders' -Name Personal).Personal
-    # Make a link for powershell
-    Move-IfExists("$documentsPath/WindowsPowershell")
-    New-Item -ItemType Directory -Force -Path "$documentsPath/Powershell"
-    New-Item -Type SymbolicLink -Path "$documentsPath/WindowsPowershell" -Target "$documentsPath/Powershell"
-    Move-IfExists("$documentsPath/Powershell/Microsoft.PowerShell_profile.ps1")
-    New-Item -Type SymbolicLink -Path "$documentsPath/Powershell/Microsoft.PowerShell_profile.ps1" -Target "$PSScriptRoot/powershell/powershell-profile.ps1"
-    Move-IfExists("$documentsPath/Powershell/.ps1")
-    New-Item -Type SymbolicLink -Path "$documentsPath/Powershell/powershellprofile-local.ps1" -Target "$PSScriptRoot/powershell/powershellprofile-local.ps1"
+    $current = Get-Item -Path ""$documentsPath/WindowsPowershell"" | Select-Object -ExpandProperty Target
+    if ($current -ne "$documentsPath/Powershell")
+    {
+        # Make a link for powershell
+        Move-IfExists("$documentsPath/WindowsPowershell")
+        New-Item -ItemType Directory -Force -Path "$documentsPath/Powershell"
+        New-Item -Type SymbolicLink -Path "$documentsPath/WindowsPowershell" -Target "$documentsPath/Powershell"
+    }
+    else
+    {
+        Write-Host "$documentsPath/WindowsPowershell pointing correctly"
+    }
+    CreateLink("$documentsPath/Powershell/Microsoft.PowerShell_profile.ps1", "$PSScriptRoot/powershell/powershell-profile.ps1")
+    CreateLink("$documentsPath/Powershell/powershellprofile-local.ps1", "$PSScriptRoot/powershell/powershellprofile-local.ps1")
 }
 
 # Get the ID and security principal of the current user account
