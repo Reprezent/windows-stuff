@@ -32,6 +32,9 @@ set ttimeoutlen=100	" wait up to 100ms after Esc for special key
 " text scroll if you mouse-click near the start or end of the window.
 set scrolloff=5
 
+" UTF-8 for emoji support
+set encoding=utf-8
+
 " Do incremental searching when it's possible to timeout.
 if has('reltime')
   set incsearch
@@ -155,13 +158,6 @@ function! <SID>SynStack()
     \       'synIDattr(v:val, "name")')
 endfunc
 
-" Auto Load Vim Folds
-augroup AutoSaveFolds
-    autocmd!
-    autocmd BufWinLeave ?* mkview
-    autocmd BufWinEnter ?* silent loadview
-augroup END
-
 " Completion above the line, not inline
 set wildmenu
 if has("vms")
@@ -176,6 +172,16 @@ else
     set undodir^=$HOME/undos
   endif
 endif
+
+augroup AutoSaveGroup
+  autocmd!
+  " view files are about 500 bytes
+  " bufleave but not bufwinleave captures closing 2nd tab
+  " nested is needed by bufwrite* (if triggered via other autocmd)
+  " BufHidden for compatibility with `set hidden`
+  autocmd BufWinLeave,BufLeave,BufWritePost,BufHidden,QuitPre ?* nested silent! mkview!
+  autocmd BufWinEnter ?* silent! loadview
+augroup end
 
 if has("gui_running")
   if has("gui_gtk2")
