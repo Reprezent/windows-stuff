@@ -14,6 +14,48 @@ if (([Version](Get-CimInstance Win32_OperatingSystem).version).Major -lt 10)
     exit 1
 }
 
+Function InstallPowershellModules()
+{
+    foreach ($line in Get-Content .\packages)
+    {
+        Invoke-Expression "Install-Module $line"
+    }
+}
+
+Function InstallWinGetPackages()
+{
+    foreach ($line in Get-Content .\winget-packages)
+    {
+        Invoke-Expression "winget install --source winget --id $line"
+    }
+}
+
+Function SetupVim()
+{
+    # Make a link for vim
+    Move-IfExists("~/vimfiles")
+    New-Item -Type SymbolicLink -Path "~/vimfiles" -Target "$PSScriptRoot/vim"
+
+    Move-IfExists("~/_vimrc")
+    New-Item -Type SymbolicLink -Path "~/_vimrc" -Target "$PSScriptRoot/vim/vimrc"
+
+    Move-IfExists("~/_gvimrc")
+    New-Item -Type SymbolicLink -Path "~/_gvimrc" -Target "$PSScriptRoot/vim/gvimrc"
+}
+
+Function SetupPowershell()
+{
+    $documentsPath = $(Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders' -Name Personal).Personal
+    # Make a link for powershell
+    Move-IfExists("$documentsPath/WindowsPowershell")
+    New-Item -ItemType Directory -Force -Path "$documentsPath/Powershell"
+    New-Item -Type SymbolicLink -Path "$documentsPath/WindowsPowershell" -Target "$documentsPath/Powershell"
+    Move-IfExists("$documentsPath/Powershell/Microsoft.PowerShell_profile.ps1")
+    New-Item -Type SymbolicLink -Path "$documentsPath/Powershell/Microsoft.PowerShell_profile.ps1" -Target "$PSScriptRoot/powershell/powershell-profile.ps1"
+    Move-IfExists("$documentsPath/Powershell/.ps1")
+    New-Item -Type SymbolicLink -Path "$documentsPath/Powershell/powershellprofile-local.ps1" -Target "$PSScriptRoot/powershell/powershellprofile-local.ps1"
+}
+
 # Get the ID and security principal of the current user account
 $myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
 $myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
@@ -25,7 +67,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 {
 
     $RegistryKeyPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock"
-    if (! (Test-Path -Path $RegistryKeyPath)) 
+    if (! (Test-Path -Path $RegistryKeyPath))
     {
         New-Item -Path $RegistryKeyPath -ItemType Directory -Force
     }
@@ -47,6 +89,7 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
         Enable-WindowsOptionalFeature -FeatureName Microsoft-Windows-Subsystem-Linux -Online -All -LimitAccess -NoRestart
     }
 
+    InstallWinGetPackages()
     if ($WaitForKey)
     {
         Write-Host -NoNewLine "Press any key to continue..."
@@ -55,6 +98,9 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 }
 else
 {
+    SetupPowershell()
+    InstallPowershellModules()
+    SetupVim()
    # We are not running "as Administrator" - so relaunch as administrator
    # Create a new process object that starts PowerShell
    $newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
@@ -71,27 +117,3 @@ else
    # Exit from the current, unelevated, process
    exit
 }
-
-
-
-foreach ($line in Get-Content .\packages)
-{
-    &"Install-Module $line"
-}
-
-# Make a link for vim
-Move-IfExists("~/vimfiles")
-New-Item -Type SymbolicLink -Path "~/vimfiles" -Target "$PSScriptRoot/vim"
-
-Move-IfExists("~/_vimrc")
-New-Item -Type SymbolicLink -Path "~/_vimrc" -Target "$PSScriptRoot/vim/vimrc"
-
-$documentsPath = $(Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders' -Name Personal).Personal
-# Make a link for powershell
-Move-IfExists("$documentsPath/WindowsPowershell")
-New-Item -ItemType Directory -Force -Path "$documentsPath/Powershell"
-New-Item -Type SymbolicLink -Path "$documentsPath/WindowsPowershell" -Target "$documentsPath/Powershell"
-Move-IfExists("$documentsPath/Powershell/Microsoft.PowerShell_profile.ps1")
-New-Item -Type SymbolicLink -Path "$documentsPath/Powershell/Microsoft.PowerShell_profile.ps1" -Target "$PSScriptRoot/powershell/powershell-profile.ps1"
-Move-IfExists("$documentsPath/Powershell/.ps1")
-New-Item -Type SymbolicLink -Path "$documentsPath/Powershell/powershellprofile-local.ps1" -Target "$PSScriptRoot/powershell/powershellprofile-local.ps1"

@@ -1,0 +1,183 @@
+if has('win32') || has ('win64')
+    let $VIMHOME = $HOME."/vimfiles"
+else
+    let $VIMHOME = $HOME."/.vim"
+endif
+
+" Use Vim settings, rather than Vi settings (much better!).
+" This must be first, because it changes other options as a side effect.
+" Avoid side effects when it was already reset.
+if &compatible
+  set nocompatible
+endif
+
+" When the +eval feature is missing, the set command above will be skipped.
+" Use a trick to reset compatible only when the +eval feature is missing.
+silent! while 0
+  set nocompatible
+silent! endwhile
+
+" Allow backspacing over everything in insert mode.
+set backspace=indent,eol,start
+
+set history=200		" keep 200 lines of command line history
+set ruler		" show the cursor position all the time
+set showcmd		" display incomplete commands
+set wildmenu		" display completion matches in a status line
+
+set ttimeout		" time out for key codes
+set ttimeoutlen=100	" wait up to 100ms after Esc for special key
+
+" Show a few lines of context around the cursor.  Note that this makes the
+" text scroll if you mouse-click near the start or end of the window.
+set scrolloff=5
+
+" Do incremental searching when it's possible to timeout.
+if has('reltime')
+  set incsearch
+endif
+
+" Do not recognize octal numbers for Ctrl-A and Ctrl-X, most users find it
+" confusing.
+set nrformats-=octal
+
+" For Win32 GUI: remove 't' flag from 'guioptions': no tearoff menu entries.
+if has('win32')
+  set guioptions-=t
+endif
+
+" In many terminal emulators the mouse works just fine.  By enabling it you
+" can position the cursor, Visually select and scroll with the mouse.
+if has('mouse')
+  set mouse=a
+endif
+
+" Show @@@ in the last line if it is truncated.
+set display=truncate
+
+" Switch syntax highlighting on when the terminal has colors or when using the
+" GUI (which always has colors).
+if &t_Co > 2 || has("gui_running")
+  " Revert with ":syntax off".
+  syntax on
+
+  " I like highlighting strings inside C comments.
+  " Revert with ":unlet c_comment_strings".
+  let c_comment_strings=1
+endif
+
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+
+  " Enable file type detection.
+  " Use the default filetype settings, so that mail gets 'tw' set to 72,
+  " 'cindent' is on in C files, etc.
+  " Also load indent files, to automatically do language-dependent indenting.
+  " Revert with ":filetype off".
+  filetype plugin indent on
+
+  " Put these in an autocmd group, so that you can revert them with:
+  " ":augroup vimStartup | au! | augroup END"
+  augroup vimStartup
+    au!
+
+    " When editing a file, always jump to the last known cursor position.
+    " Don't do it when the position is invalid, when inside an event handler
+    " (happens when dropping a file on gvim) and for a commit message (it's
+    " likely a different one than last time).
+    autocmd BufReadPost ?*
+      \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+      \ |   exe "normal! g`\""
+      \ | endif
+
+  augroup END
+
+endif " has("autocmd")
+"set t_kb=
+
+set autoindent
+set smartindent
+
+" don't highlight the last search upon startup
+set viminfo="h"
+
+" Do C-style auto indentation on C/C++/Perl files only :)
+:autocmd FileType c,cpp,perl :set cindent
+
+" Suffixes that get lower priority when doing tab completion for filenames.
+" These are files we are not likely to want to edit or read.
+set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+
+" stop Vim from beeping all the time
+set vb
+
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set expandtab
+set smarttab
+set list
+set listchars=tab:>-
+
+set background=dark
+
+"Tell you if you are in insert mode
+set showmode
+
+"match parenthesis, i.e. ) with (  and } with {
+set showmatch
+
+"ignore case when doing searches
+set ignorecase
+set smartcase
+
+"tell you how many lines have been changed
+set report=0
+
+set wildmode=longest,list
+set incsearch
+set hlsearch
+
+colorscheme elflord
+
+set showtabline=2
+
+"sets max column to be 80 characters
+set colorcolumn=+80
+
+" Show highlighting groups for current word
+nmap <C-S-P> :call <SID>SynStack()<CR>
+function! <SID>SynStack()
+    if !exists("*synstack")
+        return
+    endif
+    echo map(synstack(line('.'), col('.')),
+    \       'synIDattr(v:val, "name")')
+endfunc
+
+" Auto Load Vim Folds
+augroup AutoSaveFolds
+    autocmd!
+    autocmd BufWinLeave ?* mkview
+    autocmd BufWinEnter ?* silent loadview
+augroup END
+
+" Completion above the line, not inline
+set wildmenu
+if has("vms")
+  set nobackup " do not keep a backup file, use versions instead
+else
+  set backup " keep a backup file (restore to previous version)
+  set backupdir-=.
+  set backupdir^=$HOME/backups
+  if has('persistent_undo')
+    set undofile " keep an undo file (undo changes after closing)
+    set undodir-=.
+    set undodir^=$HOME/undos
+  endif
+endif
+
+
+if has("gui_running")
+    set guifont=IBM_Plex_Mono_Medium:h11:W500:cANSI:qDRAFT
+endif
