@@ -40,7 +40,7 @@ Function SetupVim()
     New-Item -Type SymbolicLink -Path "~/_vimrc" -Target "$PSScriptRoot/vim/vimrc"
 
     Move-IfExists("~/_gvimrc")
-    New-Item -Type SymbolicLink -Path "~/_gvimrc" -Target "$PSScriptRoot/vim/gvimrc"
+    New-Item -Type SymbolicLink -Path "~/_gvimrc" -Target "$PSScriptRoot/vim/vimrc"
 }
 
 Function SetupPowershell()
