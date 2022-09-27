@@ -58,7 +58,7 @@ Function SetupVim()
 Function SetupPowershell()
 {
     $documentsPath = $(Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders' -Name Personal).Personal
-    $current = Get-Item -Path ""$documentsPath/WindowsPowershell"" | Select-Object -ExpandProperty Target
+    $current = Get-Item -Path "$documentsPath/WindowsPowershell" | Select-Object -ExpandProperty Target
     if ($current -ne "$documentsPath/Powershell")
     {
         # Make a link for powershell
